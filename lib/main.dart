@@ -33,6 +33,7 @@ class HomeScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: CustomAppBar(),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children: <Widget>[
             HomeScreenTopPart(),
@@ -240,14 +241,14 @@ class _HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               SizedBox(width: 16.0,),
-              Text("Recently Watched Styles",style: dropDownMenuItemStyle,),
+              Text("Recently Viewed",style: dropDownMenuItemStyle,),
               Spacer(),
               Text("VIEW ALL",style: TextStyle(fontSize: 14.0,color: theme.primaryColor),)
             ],
           ),
         ),
         Container(
-          height: 300.0,
+          height: 250.0,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children:cityList
