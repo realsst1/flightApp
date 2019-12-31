@@ -170,72 +170,75 @@ class FlightCard extends StatefulWidget {
 class _FlightCardState extends State<FlightCard> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(right: 16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            border: Border.all(color: flightBorderColor),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      "\$ 8888",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    SizedBox(width: 4.0,),
-                    Text(
-                      "\$ 8888",
-                      style: TextStyle(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical:8.0),
+      child: Stack(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 16.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              border: Border.all(color: flightBorderColor),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "\$ 8888",
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,
-                          decoration: TextDecoration.lineThrough,
-                          color: Colors.grey
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Wrap(
-                  spacing: 8.0,
-                  children: <Widget>[
-                    FlightDetailChip(Icons.calendar_today,"Dec 2019"),
-                    FlightDetailChip(Icons.flight_takeoff,"IndiGo"),
-                    FlightDetailChip(Icons.star,"4.4")
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          top: 10.0,
-          right: 0.0,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.0,vertical: 4.0),
-            child: Text(
-              "55%",
-              style: TextStyle(
-                color: theme.primaryColor,
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold
+                      SizedBox(width: 4.0,),
+                      Text(
+                        "\$ 8888",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.grey
+                        ),
+                      ),
+                    ],
+                  ),
+                  Wrap(
+                    spacing: 8.0,
+                    children: <Widget>[
+                      FlightDetailChip(Icons.calendar_today,"Dec 2019"),
+                      FlightDetailChip(Icons.flight_takeoff,"IndiGo"),
+                      FlightDetailChip(Icons.star,"4.4")
+                    ],
+                  )
+                ],
               ),
             ),
-            decoration: BoxDecoration(
-              color: discountBackgroundColor,
-              borderRadius: BorderRadius.all(Radius.circular(10.0))
-            ),
           ),
-        )
-      ],
+          Positioned(
+            top: 10.0,
+            right: 0.0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.0,vertical: 4.0),
+              child: Text(
+                "55%",
+                style: TextStyle(
+                  color: theme.primaryColor,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: discountBackgroundColor,
+                borderRadius: BorderRadius.all(Radius.circular(10.0))
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
