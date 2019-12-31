@@ -1,3 +1,5 @@
+import 'package:flight/CustomAppBar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'CustomShapeClipper.dart';
@@ -28,10 +30,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          HomeScreenTopPart()
-        ],
+      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: CustomAppBar(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            HomeScreenTopPart(),
+            HomeScreenBottomPart()
+          ],
+        ),
       ),
     );
   }
@@ -54,7 +61,7 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
         ClipPath(
           clipper: CustomShapeClipper(),
           child: Container(
-            height: 400.0,
+            height: 380.0,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -66,7 +73,7 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
             child: Column(
               children: <Widget>[
                 SizedBox(
-                  height: 50.0,
+                  height: 20.0,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -208,3 +215,162 @@ class _ChoiceChipState extends State<ChoiceChip> {
     );
   }
 }
+
+List<CityCard> cityList=[
+  CityCard("assets/images/lasvegas.jpg","Las Vegas","Feb 2019","45","4299","2258"),
+  CityCard("assets/images/athens.jpg","Athens","Apr 2019","50","9999","4158"),
+  CityCard("assets/images/sydney.jpeg","Sydney","Dec 2018","48","6999","3258"),
+];
+
+
+class HomeScreenBottomPart extends StatefulWidget {
+  @override
+  _HomeScreenBottomPartState createState() => _HomeScreenBottomPartState();
+}
+
+class _HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(width: 16.0,),
+              Text("Recently Watched Styles",style: dropDownMenuItemStyle,),
+              Spacer(),
+              Text("VIEW ALL",style: TextStyle(fontSize: 14.0,color: theme.primaryColor),)
+            ],
+          ),
+        ),
+        Container(
+          height: 300.0,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children:cityList
+          ),
+        )
+      ],
+    );
+  }
+}
+
+
+
+class CityCard extends StatefulWidget {
+
+  final String imagePath,cityName,monthYear,discount,oldPrice,newPrice;
+
+  CityCard(this.imagePath,this.cityName,this.monthYear,this.discount,this.oldPrice,this.newPrice);
+
+  @override
+  _CityCardState createState() => _CityCardState();
+}
+
+class _CityCardState extends State<CityCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal:8.0),
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 210.0,
+                  width: 160.0,
+                  child: Image.asset(widget.imagePath,fit: BoxFit.cover,),
+                ),
+                Positioned(
+                  left: 0.0,
+                  bottom: 0.0,
+                  width: 160.0,
+                  height: 60.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black,
+                          Colors.black12
+                        ]
+                      )
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 10.0,
+                  bottom: 10.0,
+                  right: 10.0,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(widget.cityName,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18.0),),
+                          Text(widget.monthYear,style: TextStyle(color: Colors.white,fontWeight: FontWeight.normal,fontSize: 14.0))
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 6.0,vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(10.0))
+                        ),
+                          child: Text(
+                            widget.discount+"%",
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.black
+                            ),
+                          )
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                "\$"+widget.newPrice,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0
+                )
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                "\$"+widget.oldPrice,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.normal,
+                  fontSize:18.0
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
