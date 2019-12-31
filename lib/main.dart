@@ -1,4 +1,5 @@
 import 'package:flight/CustomAppBar.dart';
+import 'package:flight/flight_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -142,7 +143,11 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                         suffixIcon: Material(
                           elevation: 2.0,
                           borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                          child: Icon(Icons.search,color: Colors.black,),
+                          child: InkWell(child: Icon(Icons.search,color: Colors.black,),
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>FlightListingScreen()));
+                          }
+                            ),
                         )
                       ),
                     )
