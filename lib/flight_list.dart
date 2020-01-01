@@ -296,7 +296,7 @@ class _FlightCardState extends State<FlightCard> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8.0,vertical: 4.0),
               child: Text(
-                widget.flightDetails.discount,
+                widget.flightDetails.discount+"%",
                 style: TextStyle(
                   color: theme.primaryColor,
                   fontSize: 14.0,
