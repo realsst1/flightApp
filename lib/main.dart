@@ -27,6 +27,9 @@ List<String> locations=['Boston(BOS)','New Delhi(DEL)','Kolkata(CCU)'];
 const TextStyle dropDownLabelStyle=TextStyle(color: Colors.white,fontSize: 16.0);
 const TextStyle dropDownMenuItemStyle=TextStyle(color: Colors.black,fontSize: 16.0);
 
+
+final _searchFieldController= TextEditingController(text: locations[0]);
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -132,9 +135,7 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                     elevation: 5.0,
                     borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     child: TextField(
-                      controller: TextEditingController(
-                        text: locations[0],
-                      ),
+                      controller:_searchFieldController,
                       style: dropDownMenuItemStyle,
                       cursorColor: theme.primaryColor,
                       decoration: InputDecoration(
@@ -145,7 +146,12 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                           borderRadius: BorderRadius.all(Radius.circular(30.0)),
                           child: InkWell(child: Icon(Icons.search,color: Colors.black,),
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>FlightListingScreen()));
+                            print(_searchFieldController.text);
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>InheritedFlightListing(
+                              fromLocation: locations[selectedLocation],
+                              toLocation: _searchFieldController.text,
+                              child: FlightListingScreen(),
+                            )));
                           }
                             ),
                         )

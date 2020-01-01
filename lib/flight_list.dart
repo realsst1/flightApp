@@ -9,7 +9,31 @@ final Color chipBackgroundColor=Color(0xFFF6F6F6);
 Color firstColor = Color(0xFFF47D15);
 Color secondColor = Color(0xFFEF772C);
 
+
+class InheritedFlightListing extends InheritedWidget{
+
+  final String fromLocation,toLocation;
+
+  InheritedFlightListing({this.fromLocation,this.toLocation,Widget child}):super(child:child);
+
+  @override
+  bool updateShouldNotify(InheritedWidget oldWidget) {
+    // TODO: implement updateShouldNotify
+    return true;
+  }
+
+  static InheritedFlightListing of(BuildContext context){
+    return context.dependOnInheritedWidgetOfExactType<InheritedFlightListing>();
+  }
+
+}
+
+
+
 class FlightListingScreen extends StatelessWidget {
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +65,8 @@ class FlightListingScreen extends StatelessWidget {
 
 
 class FlightListTopPart extends StatefulWidget {
+
+
   @override
   _FlightListTopPartState createState() => _FlightListTopPartState();
 }
@@ -88,7 +114,7 @@ class _FlightListTopPartState extends State<FlightListTopPart> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "Boston (BOS)",
+                              InheritedFlightListing.of(context).fromLocation,
                               style: TextStyle(
                                 fontSize: 16.0,
                               ),
@@ -97,7 +123,7 @@ class _FlightListTopPartState extends State<FlightListTopPart> {
                               color: Colors.grey,
                             ),
                             Text(
-                              "New Delhi",
+                              InheritedFlightListing.of(context).toLocation,
                               style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold
