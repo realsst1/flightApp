@@ -1,16 +1,34 @@
+import 'dart:io';
+
 import 'package:flight/CustomAppBar.dart';
 import 'package:flight/flight_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'CustomShapeClipper.dart';
 
-void main()=>runApp(MaterialApp(
-  title: 'Flight App',
-  debugShowCheckedModeBanner: false,
-  home: HomeScreen(),
-  theme: theme,
-));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final FirebaseApp app=await FirebaseApp.configure(
+      name: "flight",
+      options: 
+          const FirebaseOptions(
+            googleAppID: '1:162756535267:android:e043e64c6e10a1735ab6d6',
+            gcmSenderID:'162756535267',
+            apiKey: 'AIzaSyDI5SYpMAduiEuqvZyDz77vr1uVxWSdEE4',
+            databaseURL: 'https://shreyesh-97b40.firebaseio.com/'
+          )
+
+  );
+
+  runApp(MaterialApp(
+    title: 'Flight App',
+    debugShowCheckedModeBanner: false,
+    home: HomeScreen(),
+    theme: theme,
+  ));
+}
 
 Color firstColor = Color(0xFFF47D15);
 Color secondColor = Color(0xFFEF772C);

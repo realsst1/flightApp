@@ -1,6 +1,7 @@
 import 'package:flight/CustomShapeClipper.dart';
 import 'package:flight/main.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final Color discountBackgroundColor=Color(0xFFFFE08D);
 final Color flightBorderColor=Color(0xFFE6E6E6);
@@ -169,7 +170,14 @@ class _FlightListingBottomPartState extends State<FlightListingBottomPart> {
             ),
           ),
           SizedBox(height: 10.0,),
-          ListView(
+          StreamBuilder(
+            stream: Firestore.instance.collection("deals").snapshots(),
+            builder: (context,snapshot){
+              return !snapshot.hasData ? CircularProgressIndicator():
+                  _buildDealsList(context,snapshot.data.documents);
+            },
+          ),
+          /*ListView(
             physics: ClampingScrollPhysics(),
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
@@ -181,14 +189,52 @@ class _FlightListingBottomPartState extends State<FlightListingBottomPart> {
               FlightCard(),
 
             ],
-          )
+          )*/
         ],
       ),
     );
   }
 }
 
+class FlightDetails{
+  final String airlines,date,discount,rating;
+  final int oldPrice,newPrice;
+
+  FlightDetails.fromMap(Map<String,dynamic> map)
+  :assert(map['airlines']!=null),
+  assert(map['date']!=null),
+  assert(map['discount']!=null),
+  assert(map['rating']!=null),
+  airlines=map['airlines'],
+  discount=map['discount'],
+  date=map['date'],
+  oldPrice=map['oldPrice'],
+  newPrice=map['newPrice'],
+  rating=map['rating'];
+
+  FlightDetails.fromSnapshot(DocumentSnapshot snapshot):this.fromMap(snapshot.data);
+}
+
+Widget _buildDealsList(BuildContext context,List<DocumentSnapshot> snapshot){
+  return ListView.builder(
+    physics:ClampingScrollPhysics() ,
+    itemCount: snapshot.length,
+    shrinkWrap: true,
+    scrollDirection: Axis.vertical,
+    itemBuilder: (context,index){
+      return FlightCard(
+          flightDetails: FlightDetails.fromSnapshot(snapshot[index]),
+      );
+    },
+  );
+}
+
 class FlightCard extends StatefulWidget {
+
+  final FlightDetails flightDetails;
+
+  FlightCard({this.flightDetails});
+
   @override
   _FlightCardState createState() => _FlightCardState();
 }
@@ -214,7 +260,7 @@ class _FlightCardState extends State<FlightCard> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "\$ 8888",
+                        "\$"+widget.flightDetails.newPrice.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,
@@ -222,7 +268,7 @@ class _FlightCardState extends State<FlightCard> {
                       ),
                       SizedBox(width: 4.0,),
                       Text(
-                        "\$ 8888",
+                        "\$"+widget.flightDetails.oldPrice.toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
@@ -235,9 +281,9 @@ class _FlightCardState extends State<FlightCard> {
                   Wrap(
                     spacing: 8.0,
                     children: <Widget>[
-                      FlightDetailChip(Icons.calendar_today,"Dec 2019"),
-                      FlightDetailChip(Icons.flight_takeoff,"IndiGo"),
-                      FlightDetailChip(Icons.star,"4.4")
+                      FlightDetailChip(Icons.calendar_today,widget.flightDetails.date),
+                      FlightDetailChip(Icons.flight_takeoff,widget.flightDetails.airlines),
+                      FlightDetailChip(Icons.star,widget.flightDetails.rating)
                     ],
                   )
                 ],
@@ -250,7 +296,7 @@ class _FlightCardState extends State<FlightCard> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8.0,vertical: 4.0),
               child: Text(
-                "55%",
+                widget.flightDetails.discount,
                 style: TextStyle(
                   color: theme.primaryColor,
                   fontSize: 14.0,
