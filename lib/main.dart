@@ -41,13 +41,13 @@ ThemeData theme=new ThemeData(
 );
 
 
-List<String> locations=['Boston(BOS)','New Delhi(DEL)','Kolkata(CCU)'];
+List<String> locations=List();
 
 const TextStyle dropDownLabelStyle=TextStyle(color: Colors.white,fontSize: 16.0);
 const TextStyle dropDownMenuItemStyle=TextStyle(color: Colors.black,fontSize: 16.0);
 
 
-final _searchFieldController= TextEditingController(text: locations[0]);
+final _searchFieldController= TextEditingController();
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -99,44 +99,43 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
                 SizedBox(
                   height: 20.0,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.location_on,color: Colors.white,),
-                      SizedBox(
-                        width: 16.0,
-                      ),
-                      PopupMenuButton(
-                        onSelected: (index){
-                          setState(() {
-                            selectedLocation=index;
-                          });
-                        },
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              locations[selectedLocation],
-                              style: dropDownLabelStyle,
-                            ),
-                            Icon(Icons.arrow_drop_down,color: Colors.white,)
-                          ],
-                        ),
-                        itemBuilder: (BuildContext context)=><PopupMenuItem<int>>[
-                          PopupMenuItem(
-                            child: Text(locations[0],style: dropDownMenuItemStyle,),
-                            value: 0,
+                StreamBuilder(
+                  stream: Firestore.instance.collection("locations").snapshots(),
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData){
+                      addLocations(context,snapshot.data.documents);
+                    }
+                    return !snapshot.hasData ? Container(): Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.location_on,color: Colors.white,),
+                          SizedBox(
+                            width: 16.0,
                           ),
-                          PopupMenuItem(
-                            child: Text(locations[1],style: dropDownMenuItemStyle,),
-                            value: 1,
-                          )
+                          PopupMenuButton(
+                            onSelected: (index){
+                              setState(() {
+                                selectedLocation=index;
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  locations[selectedLocation],
+                                  style: dropDownLabelStyle,
+                                ),
+                                Icon(Icons.arrow_drop_down,color: Colors.white,)
+                              ],
+                            ),
+                            itemBuilder: (BuildContext context)=>_buildPopupMenuItem()
+                          ),
+                          Spacer(),
+                          Icon(Icons.settings,color: Colors.white,)
                         ],
                       ),
-                      Spacer(),
-                      Icon(Icons.settings,color: Colors.white,)
-                    ],
-                  ),
+                    );
+                  }
                 ),
                 SizedBox(height: 50.0,),
                 Text(
@@ -208,6 +207,24 @@ class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
   }
 }
 
+List<PopupMenuItem<int>> _buildPopupMenuItem(){
+  List<PopupMenuItem<int>> list=List();
+  for(int i=0;i<locations.length;i++){
+    list.add(PopupMenuItem(
+      child: Text(locations[i],style: dropDownMenuItemStyle,),
+      value: i,
+    ));
+  }
+  return list;
+}
+
+addLocations(BuildContext context,List<DocumentSnapshot> snapshot){
+  for(int i=0;i<snapshot.length;i++){
+    final location=Location.fromSnapshots(snapshot[i]);
+    locations.add(location.name);
+  }
+}
+
 class ChoiceChip extends StatefulWidget {
 
   final IconData iconData;
@@ -245,6 +262,17 @@ class _ChoiceChipState extends State<ChoiceChip> {
       ),
     );
   }
+}
+
+
+class Location{
+  final String name;
+
+  Location.fromMap(Map<String,dynamic> map)
+      :assert(map['name']!=null),
+        name=map['name'];
+
+  Location.fromSnapshots(DocumentSnapshot snapshot):this.fromMap(snapshot.data);
 }
 
 
@@ -295,7 +323,7 @@ class _HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
         Container(
           height: 250.0,
           child: StreamBuilder(
-            stream: Firestore.instance.collection("cities").snapshots(),
+            stream: Firestore.instance.collection("cities").orderBy("discount",descending: true).snapshots(),
             builder:(context,snapshots){
               return !snapshots.hasData ? Center(child: CircularProgressIndicator(),):_buildCityList(context, snapshots.data.documents);
             },
