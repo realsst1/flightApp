@@ -246,11 +246,26 @@ class _ChoiceChipState extends State<ChoiceChip> {
   }
 }
 
-List<CityCard> cityList=[
-  CityCard("assets/images/lasvegas.jpg","Las Vegas","Feb 2019","45","4299","2258"),
-  CityCard("assets/images/athens.jpg","Athens","Apr 2019","50","9999","4158"),
-  CityCard("assets/images/sydney.jpeg","Sydney","Dec 2018","48","6999","3258"),
-];
+
+class City{
+  final String imagePath,cityName,monthYear,discount,oldPrice,newPrice;
+
+  City.fromMap(Map<String,dynamic> map)
+  :assert(map['cityName']!=null),
+  assert(map['monthYear']!=null),
+  assert(map['imagePath']!=null),
+  assert(map['discount']!=null),
+  imagePath=map['imagePath'],
+  cityName=map['cityName'],
+  monthYear=map['monthYear'],
+  discount=map['discount'],
+  oldPrice=map['oldPrice'],
+  newPrice=map['newPrice'];
+
+  City.fromSnapshots(DocumentSnapshot snapshot):this.fromMap(snapshot.data);
+}
+
+
 
 
 class HomeScreenBottomPart extends StatefulWidget {
@@ -278,23 +293,34 @@ class _HomeScreenBottomPartState extends State<HomeScreenBottomPart> {
         ),
         Container(
           height: 250.0,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children:cityList
-          ),
+          child: StreamBuilder(
+            stream: Firestore.instance.collection("cities").snapshots(),
+            builder:(context,snapshots){
+              return !snapshots.hasData ? Center(child: CircularProgressIndicator(),):_buildCityList(context, snapshots.data.documents);
+            },
+          )
         )
       ],
     );
   }
 }
 
+Widget _buildCityList(BuildContext context,List<DocumentSnapshot> snapshots){
+  return ListView.builder(
+    itemCount: snapshots.length,
+    scrollDirection: Axis.horizontal,
+    itemBuilder: (context,index){
+      return CityCard(city: City.fromSnapshots(snapshots[index]),);
+    },
+  );
 
+}
 
 class CityCard extends StatefulWidget {
 
-  final String imagePath,cityName,monthYear,discount,oldPrice,newPrice;
+  final City city;
 
-  CityCard(this.imagePath,this.cityName,this.monthYear,this.discount,this.oldPrice,this.newPrice);
+  CityCard({this.city});
 
   @override
   _CityCardState createState() => _CityCardState();
@@ -314,7 +340,7 @@ class _CityCardState extends State<CityCard> {
                 Container(
                   height: 210.0,
                   width: 160.0,
-                  child: Image.asset(widget.imagePath,fit: BoxFit.cover,),
+                  child: Image.network(widget.city.imagePath,fit: BoxFit.cover,),
                 ),
                 Positioned(
                   left: 0.0,
@@ -345,8 +371,8 @@ class _CityCardState extends State<CityCard> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(widget.cityName,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18.0),),
-                          Text(widget.monthYear,style: TextStyle(color: Colors.white,fontWeight: FontWeight.normal,fontSize: 14.0))
+                          Text(widget.city.cityName,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18.0),),
+                          Text(widget.city.monthYear,style: TextStyle(color: Colors.white,fontWeight: FontWeight.normal,fontSize: 14.0))
                         ],
                       ),
                       Container(
@@ -357,7 +383,7 @@ class _CityCardState extends State<CityCard> {
                           borderRadius: BorderRadius.all(Radius.circular(10.0))
                         ),
                           child: Text(
-                            widget.discount+"%",
+                            widget.city.discount+"%",
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Colors.black
@@ -378,7 +404,7 @@ class _CityCardState extends State<CityCard> {
                 width: 5.0,
               ),
               Text(
-                "\$"+widget.newPrice,
+                "\$"+widget.city.newPrice,
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -389,7 +415,7 @@ class _CityCardState extends State<CityCard> {
                 width: 5.0,
               ),
               Text(
-                "\$"+widget.oldPrice,
+                "\$"+widget.city.oldPrice,
                 style: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.normal,

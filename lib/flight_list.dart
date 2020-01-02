@@ -173,23 +173,10 @@ class _FlightListingBottomPartState extends State<FlightListingBottomPart> {
           StreamBuilder(
             stream: Firestore.instance.collection("deals").snapshots(),
             builder: (context,snapshot){
-              return !snapshot.hasData ? CircularProgressIndicator():
+              return !snapshot.hasData ? Center(child: CircularProgressIndicator()):
                   _buildDealsList(context,snapshot.data.documents);
             },
           ),
-          /*ListView(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              FlightCard(),
-              FlightCard(),
-              FlightCard(),
-              FlightCard(),
-              FlightCard(),
-
-            ],
-          )*/
         ],
       ),
     );
