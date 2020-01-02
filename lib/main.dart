@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flight/CustomAppBar.dart';
 import 'package:flight/flight_list.dart';
 import 'package:flutter/cupertino.dart';
@@ -340,7 +341,12 @@ class _CityCardState extends State<CityCard> {
                 Container(
                   height: 210.0,
                   width: 160.0,
-                  child: Image.network(widget.city.imagePath,fit: BoxFit.cover,),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.city.imagePath,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
                 Positioned(
                   left: 0.0,
